@@ -31,7 +31,7 @@ export const Navbar = () => {
       >
         <div className="max-w-6xl mx-auto px-4 flex justify-between items-center">
           <a href="/" className="text-xl font-bold">
-            UNSEEN
+            Lllm warehouse
           </a>
           <div className="hidden md:flex space-x-8">
             <button
