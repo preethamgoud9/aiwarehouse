@@ -14,6 +14,14 @@ export const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    setIsMenuOpen(false);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <>
       <nav
@@ -26,24 +34,24 @@ export const Navbar = () => {
             UNSEEN
           </a>
           <div className="hidden md:flex space-x-8">
-            <a
-              href="#"
+            <button
+              onClick={() => scrollToSection("work")}
               className="text-gray-600 hover:text-black transition-colors"
             >
               Work
-            </a>
-            <a
-              href="#"
+            </button>
+            <button
+              onClick={() => scrollToSection("about")}
               className="text-gray-600 hover:text-black transition-colors"
             >
               About
-            </a>
-            <a
-              href="#"
+            </button>
+            <button
+              onClick={() => scrollToSection("contact")}
               className="text-gray-600 hover:text-black transition-colors"
             >
               Contact
-            </a>
+            </button>
           </div>
           <button
             className="md:hidden"
@@ -78,27 +86,24 @@ export const Navbar = () => {
             className="fixed inset-0 bg-white z-40 md:hidden pt-20"
           >
             <div className="flex flex-col items-center space-y-8 p-8">
-              <a
-                href="#"
+              <button
+                onClick={() => scrollToSection("work")}
                 className="text-xl text-gray-600 hover:text-black transition-colors"
-                onClick={() => setIsMenuOpen(false)}
               >
                 Work
-              </a>
-              <a
-                href="#"
+              </button>
+              <button
+                onClick={() => scrollToSection("about")}
                 className="text-xl text-gray-600 hover:text-black transition-colors"
-                onClick={() => setIsMenuOpen(false)}
               >
                 About
-              </a>
-              <a
-                href="#"
+              </button>
+              <button
+                onClick={() => scrollToSection("contact")}
                 className="text-xl text-gray-600 hover:text-black transition-colors"
-                onClick={() => setIsMenuOpen(false)}
               >
                 Contact
-              </a>
+              </button>
             </div>
           </motion.div>
         )}
