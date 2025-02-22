@@ -16,122 +16,122 @@ export const Earth3D = () => {
     mountRef.current.appendChild(renderer.domElement);
 
     // Earth
-    const geometry = new THREE.SphereGeometry(5, 64, 64); // Increased segments for smoother sphere
+    const earthGeometry = new THREE.SphereGeometry(5, 64, 64);
     const textureLoader = new THREE.TextureLoader();
-    
-    // Load texture with error handling
-    textureLoader.load(
-      '/earth-texture.jpg',
-      (texture) => {
-        console.log('Texture loaded successfully');
-        const material = new THREE.MeshPhongMaterial({
-          map: texture,
-          shininess: 0.2,
-          bumpScale: 0.05,
-        });
-        const earth = new THREE.Mesh(geometry, material);
-        scene.add(earth);
 
-        // Add atmosphere effect
-        const atmosphereGeometry = new THREE.SphereGeometry(5.2, 64, 64);
-        const atmosphereMaterial = new THREE.MeshPhongMaterial({
-          color: 0x00b3ff,
-          transparent: true,
-          opacity: 0.1,
-          side: THREE.BackSide,
-        });
-        const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
-        scene.add(atmosphere);
+    // Load multiple textures for enhanced effect
+    Promise.all([
+      textureLoader.loadAsync('/earth_atmos_2048.jpg'),
+      textureLoader.loadAsync('/earth_normal_2048.jpg'),
+      textureLoader.loadAsync('/earth_lights_2048.jpg')
+    ]).then(([dayTexture, normalTexture, nightTexture]) => {
+      console.log('Textures loaded successfully');
+      
+      const earthMaterial = new THREE.MeshPhongMaterial({
+        map: dayTexture,
+        normalMap: normalTexture,
+        specularMap: nightTexture,
+        normalScale: new THREE.Vector2(0.85, -0.85),
+        shininess: 15,
+      });
 
-        // Interactive rotation
-        let targetRotation = { x: 0, y: 0 };
-        let currentRotation = { x: 0, y: 0 };
-        let isDragging = false;
-        let previousMousePosition = { x: 0, y: 0 };
+      const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+      scene.add(earth);
 
-        const handleMouseDown = (event: MouseEvent) => {
-          isDragging = true;
-          previousMousePosition = {
-            x: event.clientX,
-            y: event.clientY,
-          };
+      // Add cloud layer
+      const cloudGeometry = new THREE.SphereGeometry(5.05, 64, 64);
+      const cloudMaterial = new THREE.MeshPhongMaterial({
+        map: textureLoader.load('/earth_clouds_2048.jpg'),
+        transparent: true,
+        opacity: 0.4
+      });
+
+      const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
+      scene.add(clouds);
+
+      // Interactive rotation
+      let targetRotation = { x: 0, y: 0 };
+      let currentRotation = { x: 0, y: 0 };
+      let isDragging = false;
+      let previousMousePosition = { x: 0, y: 0 };
+
+      const handleMouseDown = (event: MouseEvent) => {
+        isDragging = true;
+        previousMousePosition = {
+          x: event.clientX,
+          y: event.clientY,
+        };
+      };
+
+      const handleMouseMove = (event: MouseEvent) => {
+        if (!isDragging) return;
+
+        const deltaMove = {
+          x: event.clientX - previousMousePosition.x,
+          y: event.clientY - previousMousePosition.y,
         };
 
-        const handleMouseMove = (event: MouseEvent) => {
-          if (!isDragging) return;
+        targetRotation.x += deltaMove.y * 0.005;
+        targetRotation.y += deltaMove.x * 0.005;
 
-          const deltaMove = {
-            x: event.clientX - previousMousePosition.x,
-            y: event.clientY - previousMousePosition.y,
-          };
-
-          targetRotation.x += deltaMove.y * 0.005;
-          targetRotation.y += deltaMove.x * 0.005;
-
-          previousMousePosition = {
-            x: event.clientX,
-            y: event.clientY,
-          };
+        previousMousePosition = {
+          x: event.clientX,
+          y: event.clientY,
         };
+      };
 
-        const handleMouseUp = () => {
-          isDragging = false;
-        };
+      const handleMouseUp = () => {
+        isDragging = false;
+      };
 
-        // Add event listeners
-        window.addEventListener('mousedown', handleMouseDown);
-        window.addEventListener('mousemove', handleMouseMove);
-        window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('mousedown', handleMouseDown);
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
 
-        // Animation
-        const animate = () => {
-          requestAnimationFrame(animate);
+      // Animation
+      const animate = () => {
+        requestAnimationFrame(animate);
 
-          // Smooth rotation
-          currentRotation.x += (targetRotation.x - currentRotation.x) * 0.1;
-          currentRotation.y += (targetRotation.y - currentRotation.y) * 0.1;
+        // Smooth rotation
+        currentRotation.x += (targetRotation.x - currentRotation.x) * 0.1;
+        currentRotation.y += (targetRotation.y - currentRotation.y) * 0.1;
 
-          // Auto rotation when not dragging
-          if (!isDragging) {
-            targetRotation.y += 0.003;
-          }
+        if (!isDragging) {
+          targetRotation.y += 0.002;
+        }
 
-          earth.rotation.x = currentRotation.x;
-          earth.rotation.y = currentRotation.y;
-          atmosphere.rotation.x = currentRotation.x;
-          atmosphere.rotation.y = currentRotation.y;
+        earth.rotation.x = currentRotation.x;
+        earth.rotation.y = currentRotation.y;
+        clouds.rotation.x = currentRotation.x;
+        clouds.rotation.y = currentRotation.y + 0.0003; // Slightly different rotation for clouds
 
-          renderer.render(scene, camera);
-        };
-        animate();
+        renderer.render(scene, camera);
+      };
+      animate();
 
-        // Cleanup function
-        return () => {
-          window.removeEventListener('mousedown', handleMouseDown);
-          window.removeEventListener('mousemove', handleMouseMove);
-          window.removeEventListener('mouseup', handleMouseUp);
-        };
-      },
-      undefined,
-      (error) => {
-        console.error('Error loading texture:', error);
-        // Fallback material if texture fails to load
-        const material = new THREE.MeshPhongMaterial({
-          color: 0x2233ff,
-          shininess: 0.2,
-        });
-        const earth = new THREE.Mesh(geometry, material);
-        scene.add(earth);
-      }
-    );
+      return () => {
+        window.removeEventListener('mousedown', handleMouseDown);
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      };
+    }).catch(error => {
+      console.error('Error loading textures:', error);
+      // Fallback material if textures fail to load
+      const material = new THREE.MeshPhongMaterial({
+        color: 0x2233ff,
+        shininess: 0.2,
+      });
+      const earth = new THREE.Mesh(earthGeometry, material);
+      scene.add(earth);
+    });
 
-    // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // Enhanced lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambientLight);
     
-    const pointLight = new THREE.PointLight(0xffffff, 1);
-    pointLight.position.set(10, 10, 10);
-    scene.add(pointLight);
+    const mainLight = new THREE.DirectionalLight(0xffffff, 1.8);
+    mainLight.position.set(5, 3, 5);
+    scene.add(mainLight);
 
     // Camera position
     camera.position.z = 15;
