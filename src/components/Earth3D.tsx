@@ -10,7 +10,7 @@ export const Earth3D = () => {
 
     // Scene setup
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x000000); // Set black background
+    scene.background = new THREE.Color(0x000000);
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -21,14 +21,16 @@ export const Earth3D = () => {
     // Earth
     const earthGeometry = new THREE.SphereGeometry(5, 64, 64);
     const textureLoader = new THREE.TextureLoader();
+    
+    console.log('Starting to load textures...');
 
-    // Load multiple textures for enhanced effect
+    // Load textures with exact file names from your public folder
     Promise.all([
-      textureLoader.loadAsync('/earth_atmos_2048.jpg'),
+      textureLoader.loadAsync('/earth-texture.jpg'),
       textureLoader.loadAsync('/earth_normal_2048.jpg'),
-      textureLoader.loadAsync('/earth_lights_2048.jpg')
+      textureLoader.loadAsync('/earth_lights_2048.png')
     ]).then(([dayTexture, normalTexture, nightTexture]) => {
-      console.log('Textures loaded successfully');
+      console.log('All textures loaded successfully');
       
       const earthMaterial = new THREE.MeshPhongMaterial({
         map: dayTexture,
@@ -41,10 +43,10 @@ export const Earth3D = () => {
       const earth = new THREE.Mesh(earthGeometry, earthMaterial);
       scene.add(earth);
 
-      // Add cloud layer
+      // Add cloud layer with correct file name
       const cloudGeometry = new THREE.SphereGeometry(5.05, 64, 64);
       const cloudMaterial = new THREE.MeshPhongMaterial({
-        map: textureLoader.load('/earth_clouds_2048.jpg'),
+        map: textureLoader.load('/earth_clouds_1024.png'),
         transparent: true,
         opacity: 0.4
       });
@@ -100,7 +102,7 @@ export const Earth3D = () => {
         currentRotation.y += (targetRotation.y - currentRotation.y) * 0.1;
 
         if (!isDragging) {
-          targetRotation.y += 0.001; // Slower auto-rotation
+          targetRotation.y += 0.001;
         }
 
         earth.rotation.x = currentRotation.x;
@@ -112,7 +114,6 @@ export const Earth3D = () => {
       };
       animate();
 
-      // Cleanup
       return () => {
         renderer.domElement.removeEventListener('mousedown', handleMouseDown);
         renderer.domElement.removeEventListener('mousemove', handleMouseMove);
@@ -120,6 +121,7 @@ export const Earth3D = () => {
       };
     }).catch(error => {
       console.error('Error loading textures:', error);
+      console.error('Failed to load one or more textures. Check file paths and names.');
       const material = new THREE.MeshPhongMaterial({
         color: 0x2233ff,
         shininess: 0.2,
