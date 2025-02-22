@@ -10,9 +10,12 @@ export const Earth3D = () => {
 
     // Scene setup
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000); // Set black background
+
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
     mountRef.current.appendChild(renderer.domElement);
 
     // Earth
@@ -84,9 +87,9 @@ export const Earth3D = () => {
         isDragging = false;
       };
 
-      window.addEventListener('mousedown', handleMouseDown);
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
+      renderer.domElement.addEventListener('mousedown', handleMouseDown);
+      renderer.domElement.addEventListener('mousemove', handleMouseMove);
+      renderer.domElement.addEventListener('mouseup', handleMouseUp);
 
       // Animation
       const animate = () => {
@@ -97,26 +100,26 @@ export const Earth3D = () => {
         currentRotation.y += (targetRotation.y - currentRotation.y) * 0.1;
 
         if (!isDragging) {
-          targetRotation.y += 0.002;
+          targetRotation.y += 0.001; // Slower auto-rotation
         }
 
         earth.rotation.x = currentRotation.x;
         earth.rotation.y = currentRotation.y;
         clouds.rotation.x = currentRotation.x;
-        clouds.rotation.y = currentRotation.y + 0.0003; // Slightly different rotation for clouds
+        clouds.rotation.y = currentRotation.y + 0.0003;
 
         renderer.render(scene, camera);
       };
       animate();
 
+      // Cleanup
       return () => {
-        window.removeEventListener('mousedown', handleMouseDown);
-        window.removeEventListener('mousemove', handleMouseMove);
-        window.removeEventListener('mouseup', handleMouseUp);
+        renderer.domElement.removeEventListener('mousedown', handleMouseDown);
+        renderer.domElement.removeEventListener('mousemove', handleMouseMove);
+        renderer.domElement.removeEventListener('mouseup', handleMouseUp);
       };
     }).catch(error => {
       console.error('Error loading textures:', error);
-      // Fallback material if textures fail to load
       const material = new THREE.MeshPhongMaterial({
         color: 0x2233ff,
         shininess: 0.2,
