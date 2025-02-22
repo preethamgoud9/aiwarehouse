@@ -16,15 +16,114 @@ export const Earth3D = () => {
     mountRef.current.appendChild(renderer.domElement);
 
     // Earth
-    const geometry = new THREE.SphereGeometry(5, 32, 32);
+    const geometry = new THREE.SphereGeometry(5, 64, 64); // Increased segments for smoother sphere
     const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load('/earth-texture.jpg');
-    const material = new THREE.MeshPhongMaterial({
-      map: texture,
-      shininess: 0.2,
-    });
-    const earth = new THREE.Mesh(geometry, material);
-    scene.add(earth);
+    
+    // Load texture with error handling
+    textureLoader.load(
+      '/earth-texture.jpg',
+      (texture) => {
+        console.log('Texture loaded successfully');
+        const material = new THREE.MeshPhongMaterial({
+          map: texture,
+          shininess: 0.2,
+          bumpScale: 0.05,
+        });
+        const earth = new THREE.Mesh(geometry, material);
+        scene.add(earth);
+
+        // Add atmosphere effect
+        const atmosphereGeometry = new THREE.SphereGeometry(5.2, 64, 64);
+        const atmosphereMaterial = new THREE.MeshPhongMaterial({
+          color: 0x00b3ff,
+          transparent: true,
+          opacity: 0.1,
+          side: THREE.BackSide,
+        });
+        const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+        scene.add(atmosphere);
+
+        // Interactive rotation
+        let targetRotation = { x: 0, y: 0 };
+        let currentRotation = { x: 0, y: 0 };
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+
+        const handleMouseDown = (event: MouseEvent) => {
+          isDragging = true;
+          previousMousePosition = {
+            x: event.clientX,
+            y: event.clientY,
+          };
+        };
+
+        const handleMouseMove = (event: MouseEvent) => {
+          if (!isDragging) return;
+
+          const deltaMove = {
+            x: event.clientX - previousMousePosition.x,
+            y: event.clientY - previousMousePosition.y,
+          };
+
+          targetRotation.x += deltaMove.y * 0.005;
+          targetRotation.y += deltaMove.x * 0.005;
+
+          previousMousePosition = {
+            x: event.clientX,
+            y: event.clientY,
+          };
+        };
+
+        const handleMouseUp = () => {
+          isDragging = false;
+        };
+
+        // Add event listeners
+        window.addEventListener('mousedown', handleMouseDown);
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
+
+        // Animation
+        const animate = () => {
+          requestAnimationFrame(animate);
+
+          // Smooth rotation
+          currentRotation.x += (targetRotation.x - currentRotation.x) * 0.1;
+          currentRotation.y += (targetRotation.y - currentRotation.y) * 0.1;
+
+          // Auto rotation when not dragging
+          if (!isDragging) {
+            targetRotation.y += 0.003;
+          }
+
+          earth.rotation.x = currentRotation.x;
+          earth.rotation.y = currentRotation.y;
+          atmosphere.rotation.x = currentRotation.x;
+          atmosphere.rotation.y = currentRotation.y;
+
+          renderer.render(scene, camera);
+        };
+        animate();
+
+        // Cleanup function
+        return () => {
+          window.removeEventListener('mousedown', handleMouseDown);
+          window.removeEventListener('mousemove', handleMouseMove);
+          window.removeEventListener('mouseup', handleMouseUp);
+        };
+      },
+      undefined,
+      (error) => {
+        console.error('Error loading texture:', error);
+        // Fallback material if texture fails to load
+        const material = new THREE.MeshPhongMaterial({
+          color: 0x2233ff,
+          shininess: 0.2,
+        });
+        const earth = new THREE.Mesh(geometry, material);
+        scene.add(earth);
+      }
+    );
 
     // Lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -36,15 +135,6 @@ export const Earth3D = () => {
 
     // Camera position
     camera.position.z = 15;
-
-    // Animation
-    let frameId: number;
-    const animate = () => {
-      frameId = requestAnimationFrame(animate);
-      earth.rotation.y += 0.001;
-      renderer.render(scene, camera);
-    };
-    animate();
 
     // Handle window resize
     const handleResize = () => {
@@ -58,9 +148,6 @@ export const Earth3D = () => {
 
     // Cleanup
     return () => {
-      if (frameId) {
-        cancelAnimationFrame(frameId);
-      }
       window.removeEventListener('resize', handleResize);
       if (mountRef.current) {
         mountRef.current.removeChild(renderer.domElement);
