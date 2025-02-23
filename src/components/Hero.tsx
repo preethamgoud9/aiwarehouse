@@ -15,7 +15,7 @@ export const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-block text-sm tracking-wider uppercase mb-4 text-blue-200 font-medium bg-blue-500/10 px-4 py-1 rounded-full backdrop-blur-sm"
+          className="inline-block text-sm tracking-wider uppercase mb-4 text-blue-50 font-medium bg-blue-950/80 px-6 py-2 rounded-full backdrop-blur-sm border border-blue-800/30 shadow-lg"
         >
           AI WAREHOUSE
         </motion.span>
@@ -41,7 +41,7 @@ export const Hero = () => {
         >
           <button 
             onClick={() => document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' })}
-            className="group px-6 py-3 bg-white/10 border border-white/20 rounded-full text-sm text-white hover:bg-white/20 hover:border-white/30 transition-all duration-300 flex items-center gap-2 backdrop-blur-sm"
+            className="group px-6 py-3 bg-white/15 border border-white/30 rounded-full text-sm text-white hover:bg-white/25 hover:border-white/40 transition-all duration-300 flex items-center gap-2 backdrop-blur-sm"
           >
             View our work
             <span className="inline-block transform -rotate-45 transition-transform group-hover:translate-x-1">→</span>
