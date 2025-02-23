@@ -26,35 +26,35 @@ export const Navbar = () => {
     <>
       <nav
         className={`fixed w-full z-50 transition-all duration-300 ${
-          isScrolled ? "py-4 bg-white shadow-sm" : "py-6 bg-transparent"
+          isScrolled ? "py-4 bg-black shadow-sm" : "py-6 bg-transparent"
         }`}
       >
         <div className="max-w-6xl mx-auto px-4 flex justify-between items-center">
-          <a href="/" className="text-xl font-bold">
+          <a href="/" className="text-xl font-bold bg-gradient-to-r from-white via-blue-100 to-blue-200 bg-clip-text text-transparent">
             AI WAREHOUSE
           </a>
           <div className="hidden md:flex space-x-8">
             <button
               onClick={() => scrollToSection("work")}
-              className="text-gray-600 hover:text-black transition-colors"
+              className="text-white hover:text-blue-100 transition-colors"
             >
               Work
             </button>
             <button
               onClick={() => scrollToSection("about")}
-              className="text-gray-600 hover:text-black transition-colors"
+              className="text-white hover:text-blue-100 transition-colors"
             >
               About
             </button>
             <button
               onClick={() => scrollToSection("contact")}
-              className="text-gray-600 hover:text-black transition-colors"
+              className="text-white hover:text-blue-100 transition-colors"
             >
               Contact
             </button>
           </div>
           <button
-            className="md:hidden"
+            className="md:hidden text-white"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <svg
@@ -83,24 +83,24 @@ export const Navbar = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-white z-40 md:hidden pt-20"
+            className="fixed inset-0 bg-black bg-opacity-95 z-40 md:hidden pt-20"
           >
             <div className="flex flex-col items-center space-y-8 p-8">
               <button
                 onClick={() => scrollToSection("work")}
-                className="text-xl text-gray-600 hover:text-black transition-colors"
+                className="text-xl text-white hover:text-blue-100 transition-colors"
               >
                 Work
               </button>
               <button
                 onClick={() => scrollToSection("about")}
-                className="text-xl text-gray-600 hover:text-black transition-colors"
+                className="text-xl text-white hover:text-blue-100 transition-colors"
               >
                 About
               </button>
               <button
                 onClick={() => scrollToSection("contact")}
-                className="text-xl text-gray-600 hover:text-black transition-colors"
+                className="text-xl text-white hover:text-blue-100 transition-colors"
               >
                 Contact
               </button>
