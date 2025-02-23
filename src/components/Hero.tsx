@@ -12,7 +12,7 @@ export const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-block text-sm tracking-wider uppercase mb-4 text-gray-300"
+          className="inline-block text-sm tracking-wider uppercase mb-4 bg-gradient-to-r from-white via-blue-100 to-blue-200 bg-clip-text text-transparent font-medium"
         >
           AI WAREHOUSE
         </motion.span>
