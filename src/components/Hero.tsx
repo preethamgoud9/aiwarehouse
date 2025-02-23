@@ -41,13 +41,6 @@ export const Hero = () => {
           </button>
         </motion.div>
 
-        {/* Bottom Elements */}
-        <div className="absolute bottom-8 left-8">
-          <button className="px-6 py-2 border border-white text-white bg-transparent rounded-full text-sm hover:bg-white hover:text-black transition-all duration-300">
-            Read about our rebrand
-          </button>
-        </div>
-
         <div className="absolute bottom-8 right-8 text-sm text-white">
           ©2025
         </div>
