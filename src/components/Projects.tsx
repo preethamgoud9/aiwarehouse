@@ -13,7 +13,7 @@ const projects = [
     image: "https://source.unsplash.com/random/800x600?design",
   },
   {
-    title: "Large Language Models",
+    title: "Generative AI",
     category: "AI Development",
     image: "https://source.unsplash.com/random/800x600?artificial",
   },
