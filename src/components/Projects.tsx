@@ -3,9 +3,9 @@ import { motion } from "framer-motion";
 
 const projects = [
   {
-    title: "Digital Experience",
-    category: "Web Design",
-    image: "https://source.unsplash.com/random/800x600?minimal",
+    title: "Software 2.0",
+    category: "Neural Systems",
+    image: "https://source.unsplash.com/random/800x600?neural",
   },
   {
     title: "Brand Identity",
@@ -13,9 +13,9 @@ const projects = [
     image: "https://source.unsplash.com/random/800x600?design",
   },
   {
-    title: "Mobile Application",
-    category: "Development",
-    image: "https://source.unsplash.com/random/800x600?tech",
+    title: "Large Language Models",
+    category: "AI Development",
+    image: "https://source.unsplash.com/random/800x600?artificial",
   },
 ];
 
