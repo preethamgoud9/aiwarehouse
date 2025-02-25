@@ -27,7 +27,7 @@ export const Contact = () => {
 
     try {
       const { error } = await supabase
-        .from("contact_submissions")
+        .from("contact_messages")  // Changed from contact_submissions to contact_messages
         .insert([
           {
             name: formData.name,
@@ -46,6 +46,7 @@ export const Contact = () => {
       // Clear form
       setFormData({ name: "", email: "", message: "" });
     } catch (error) {
+      console.error('Error submitting form:', error);
       toast({
         variant: "destructive",
         title: "Error sending message",
@@ -125,4 +126,3 @@ export const Contact = () => {
     </section>
   );
 };
-
